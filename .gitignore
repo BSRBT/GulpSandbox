@@ -1,0 +1,4 @@
+static/css/*
+.sass-cache
+node_modules/
+.idea/workspace.xml

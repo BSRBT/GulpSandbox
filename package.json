@@ -1,0 +1,37 @@
+{
+  "name": "gulp4sandbox",
+  "version": "1.0.0",
+  "description": "Simple builder",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^4.0.0",
+    "gulp-connect": "^5.7.0",
+    "gulp-debug": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-open": "^3.0.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-pug": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-stylus": "^2.7.0",
+    "os": "^0.1.1",
+    "rupture": "^0.7.1"
+  },
+  "devDependencies": {
+    "emitty": "^1.4.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-notify": "^3.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BSRBT/GulpSandbox.git"
+  },
+  "author": "BSRBT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BSRBT/GulpSandbox/issues"
+  },
+  "homepage": "https://github.com/BSRBT/GulpSandbox#readme"
+}
