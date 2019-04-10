@@ -1,14 +1,13 @@
 "use strict";
 
 // Load plugins
-const { watch, series, parallel } = require('gulp');
-const gulp = require('gulp');
-const os = require('os');
+const { watch, series, parallel, src, dest } = require('gulp');
+const { platform } = require('os');
 const autoprefixer = require('gulp-autoprefixer');
-const sourcemaps = require('gulp-sourcemaps');
+const { init, write } = require('gulp-sourcemaps');
 const stylus = require('gulp-stylus');
 const rupture = require('rupture');
-const connect = require('gulp-connect');
+const { server, reload } = require('gulp-connect');
 const pug = require('gulp-pug');
 const plumber = require('gulp-plumber');
 const gulpif = require('gulp-if');
@@ -20,22 +19,22 @@ const emitty = require('emitty').setup('dev/pug', 'pug', {
 });
 
 
-const browser = os.platform() === 'linux' ? 'google-chrome' : (
-  os.platform() === 'darwin' ? 'google chrome' : (
-  os.platform() === 'win32' ? 'chrome' : 'firefox'));
+const browser = platform() === 'linux' ? 'google-chrome' : (
+  platform() === 'darwin' ? 'google chrome' : (
+  platform() === 'win32' ? 'chrome' : 'firefox'));
 
 const openPage = (done) => {
 	let options = {
 		uri: 'http://localhost:1337',
 		app: browser
 	};
-	gulp.src(__filename)
+	src(__filename)
 		.pipe(open(options));
 	done();
 }
 
 const liveReload = (done) => {
-  connect.server({
+  server({
     root: './dist',
     livereload: true,
     port: 1337
@@ -44,20 +43,20 @@ const liveReload = (done) => {
 }
 
 const styl = (done) => {
-	gulp.src('dev/styl/style.styl')
+	src('dev/styl/style.styl')
 		.pipe(plumber())
 		.pipe(debug({title: 'Updated styles :'}))
-		.pipe(sourcemaps.init())
+		.pipe(init())
 		.pipe(stylus({
 			use: rupture()
 		}))
 		.pipe(autoprefixer({
 				browsers: ['last 2 versions', 'ie 10', 'ie 11'],
 		}))
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('dist/css'))
+		.pipe(write())
+		.pipe(dest('dist/css'))
 		.pipe(notify({message: 'Served "<%= file.path %>"'}))
-		.pipe(connect.reload())
+		.pipe(reload())
 	done();
 }
 
@@ -68,13 +67,13 @@ const templates = (done) => {
 		const sourceOptions = global.watch ? { read: false } : {};
 
 		emitty.scan(global.emittyChangedFile).then(() => {
-			gulp.src('dev/pug/*.pug', sourceOptions)
+			src('dev/pug/_pages/*.pug', sourceOptions)
 				.pipe(plumber())
 				.pipe(gulpif(global.watch, emitty.filter(global.emittyChangedFile)))
         .pipe(debug({title: 'Updated pages :'}))
 				.pipe(pug({ pretty: true }))
-				.pipe(gulp.dest('dist'))
-        .pipe(connect.reload())
+				.pipe(dest('dist'))
+        .pipe(reload())
 				.on('end', resolve)
         .pipe(notify({message: 'Served "<%= file.path %>"'}))
 				.on('error', reject);
@@ -85,11 +84,11 @@ const templates = (done) => {
 
 const setWatch = (done) => {
   global.watch = true;
-  watch('dev/pug/**/*.pug', { ignoreInitial: false }, gulp.series( templates ))
+  watch('dev/pug/**/*.pug', { ignoreInitial: false }, series( templates ))
   .on('all', (event, filepath) => {
     global.emittyChangedFile = filepath;
   })
-	watch('dev/styl/**/*.styl', { ignoreInitial: false }, gulp.series( styl ))
+	watch('dev/styl/**/*.styl', { ignoreInitial: false }, series( styl ))
   done();
 }
 
