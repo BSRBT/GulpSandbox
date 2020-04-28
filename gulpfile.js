@@ -3,7 +3,8 @@
 // Load plugins
 const { watch, series, parallel, src, dest } = require('gulp');
 const { platform } = require('os');
-const autoprefixer = require('gulp-autoprefixer');
+const autoprefixer = require('autoprefixer');
+const postcss = require('gulp-postcss');
 const { init, write } = require('gulp-sourcemaps');
 const stylus = require('gulp-stylus');
 const rupture = require('rupture');
@@ -50,9 +51,7 @@ const styl = (done) => {
 		.pipe(stylus({
 			use: rupture()
 		}))
-		.pipe(autoprefixer({
-				browsers: ['last 2 versions', 'ie 10', 'ie 11'],
-		}))
+		.pipe(postcss([autoprefixer()]))
 		.pipe(write())
 		.pipe(dest('dist/css'))
 		.pipe(notify({message: 'Served "<%= file.path %>"'}))
